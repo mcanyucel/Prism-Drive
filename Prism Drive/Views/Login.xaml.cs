@@ -1,71 +1,50 @@
 using CommunityToolkit.Maui.Views;
-using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
+using Prism_Drive.Services;
 
 namespace Prism_Drive.Views;
 
 public partial class Login : Popup
 {
-    private static readonly HttpClient _httpClient = new();
+
+    public static readonly string ACCESS_TOKEN_KEY = "access_token";
+
+    private readonly IHttpService httpService;
 
 
     public Login()
     {
         InitializeComponent();
         // since this is a Popup, it cannot be databound.
+        httpService = App.Current.Services.GetService<IHttpService>();
     }
 
     private async Task TryLoginAsync()
     {
+
+        btnLogin.IsEnabled = false;
         var email = txtUsername.Text;
         var password = txtPassword.Text;
         var token_name = txtTokenName.Text;
 
-        var jsonString = JsonSerializer.Serialize(new { email, password, token_name });
+        txtLoginStatus.Text = "Acquiring user...";
 
-        using StringContent jsonContent = new(
-            jsonString,
-            Encoding.UTF8,
-            "application/json"
-            );
+        var user = await httpService.GetAccessTokenAsync(email, password, token_name);
 
-        txtLoginStatus.Text = "Acquiring access token...";
-
-        using HttpResponseMessage httpResponse = await _httpClient.PostAsync("https://app.prismdrive.com/api/v1/auth/login", jsonContent);
-
-        if (httpResponse.IsSuccessStatusCode)
+        if (user == null)
         {
-            var jsonResponse = await httpResponse.Content.ReadAsStringAsync();
-
-            
-
-            Regex regex = AccessTokenRegex();
-            var accessTokenMatch = regex.Match(jsonResponse);
-
-            if (accessTokenMatch.Success)
-            {
-                var accessToken = accessTokenMatch.ToString().Split(':')[1].Replace("\"", String.Empty);
-                txtLoginStatus.Text = "Access token acquired, saving the token...";
-                Debug.WriteLine(accessToken);
-            }
-            else
-            {
-                txtLoginStatus.Text = "Cannot extract access token, invalid response!";
-            }
+            txtLoginStatus.Text = "Error getting user details!";
         }
+
         else
         {
-            txtLoginStatus.Text = $"Server connection error: {httpResponse.StatusCode.ToString()}";
+            Close(user);
         }
+
+        btnLogin.IsEnabled = true;
     }
 
     private async void btnLogin_Clicked(object sender, EventArgs e)
     {
         await TryLoginAsync();
     }
-
-    [GeneratedRegex("\"access_token\":\"(?:[^\"]|\"\")*\"", RegexOptions.IgnoreCase, "en-US")]
-    private static partial Regex AccessTokenRegex();
 }

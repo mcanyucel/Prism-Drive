@@ -1,4 +1,6 @@
-﻿using Prism_Drive.ViewModels;
+﻿
+using Prism_Drive.Services;
+using Prism_Drive.Services.Implementation;
 
 namespace Prism_Drive;
 
@@ -21,7 +23,7 @@ public partial class App : Application
 	{
 		var services = new ServiceCollection();
 
-		services.AddTransient<LoginViewModel>();
+		services.AddSingleton<IHttpService, HttpService>();
 
 		return services.BuildServiceProvider();
 	}
