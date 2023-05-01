@@ -6,15 +6,12 @@ namespace Prism_Drive.Views;
 public partial class Login : Popup
 {
 
-    public static readonly string ACCESS_TOKEN_KEY = "access_token";
-
     private readonly IHttpService httpService;
 
 
     public Login()
     {
         InitializeComponent();
-        // since this is a Popup, it cannot be databound.
         httpService = App.Current.Services.GetService<IHttpService>();
     }
 

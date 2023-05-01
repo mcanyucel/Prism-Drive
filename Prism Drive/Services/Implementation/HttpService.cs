@@ -1,4 +1,5 @@
 ﻿using Prism_Drive.Models;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -29,7 +30,8 @@ namespace Prism_Drive.Services.Implementation
                 {
                     var accessToken = accessTokenMatch.ToString().Split(':')[1].Replace("\"", string.Empty);
                     var displayName = displayNameMatch.Success ? displayNameMatch.ToString().Split(':')[1].Replace("\"", string.Empty) : "No Name";
-                    var avatarUrl = avatarUrlMatch.Success ? avatarUrlMatch.Result("\"[^\"]*\"").Replace("\"", string.Empty) : string.Empty;
+                    var avatarUrlPre = String.Join(':', avatarUrlMatch.Success ? avatarUrlMatch.ToString().Split(':').Skip(1).ToArray() : Array.Empty<string>());
+                    var avatarUrl = avatarUrlPre != string.Empty ? avatarUrlPre.Replace("\"", string.Empty).Replace("\\/", "/") : string.Empty;
                     return new PrismUser
                     {
                         AccessToken = accessToken,

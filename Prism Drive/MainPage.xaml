@@ -1,13 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Prism_Drive"
+             xmlns:converters="clr-namespace:Prism_Drive.BindingConverters"
+             xmlns:viewmodels="clr-namespace:Prism_Drive.ViewModels"
+
+             
              x:Class="Prism_Drive.MainPage">
+
+    <ContentPage.Resources>
+        <converters:UserBooleanConverter x:Key="UserBooleanConverter" />
+        <converters:InverseUserBooleanConverter x:Key="InverseUserBooleanConverter" />
+    </ContentPage.Resources>
+
 
     <ScrollView>
         <VerticalStackLayout
             Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+            VerticalOptions="Start">
+
+            <Grid HorizontalOptions="FillAndExpand"  BackgroundColor="Blue" IsVisible="{Binding PrismUser, Converter={StaticResource UserBooleanConverter}}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image HorizontalOptions="Start" Grid.Column="0"
+                    Source="{Binding PrismUser.AvatarUrl}" HeightRequest="64"  />
+                <Label Grid.Column="1" Margin="8" Text="{Binding PrismUser.DisplayName}" HorizontalOptions="Start" VerticalOptions="Center" TextColor="White" />
+                <Button Grid.Column="2" Text="LOG OUT" HorizontalOptions="End" Margin="12" />
+
+            </Grid>
+            
+
+            <Grid VerticalOptions="Start" BackgroundColor="Blue" IsVisible="{Binding PrismUser, Converter={StaticResource InverseUserBooleanConverter}}">
+                <Button Text="LOGIN" HorizontalOptions="End" Margin="8" Command="{Binding LoginCommand}" />
+            </Grid>
 
             <Image
                 Source="dotnet_bot.png"
@@ -15,25 +44,7 @@
                 HeightRequest="200"
                 HorizontalOptions="Center" />
 
-            <Label
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
 
-            <Label
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="CounterBtn_Clicked"
-                HorizontalOptions="Center" />
 
         </VerticalStackLayout>
     </ScrollView>
