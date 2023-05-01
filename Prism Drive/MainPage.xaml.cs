@@ -14,7 +14,7 @@ public partial class MainPage : ContentPage
 
 	private async void OnCounterClicked(object sender, EventArgs e)
 	{
-		var popup = new Login(accessToken);
+		var popup = new Login();
 		var result = await this.ShowPopupAsync(popup);
 	}
 }

@@ -2,6 +2,7 @@ using CommunityToolkit.Maui.Views;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Prism_Drive.Views;
 
@@ -35,7 +36,20 @@ public partial class Login : Popup
         {
             var jsonResponse = await httpResponse.Content.ReadAsStringAsync();
 
-            var accessToken = JsonSerializer.DeserializeAsync(jsonResponse);
+            
+
+            Regex regex = AccessTokenRegex();
+            var accessTokenMatch = regex.Match(jsonResponse);
+
+            if (accessTokenMatch.Success)
+            {
+                var accessToken = accessTokenMatch.ToString().Split(':')[1].Replace("\"", String.Empty);
+                Debug.WriteLine(accessToken);
+            }
+            else
+            {
+                Debug.WriteLine("Invalid response");
+            }
         }
         else
         {
@@ -47,4 +61,7 @@ public partial class Login : Popup
     {
         await TryLoginAsync();
     }
+
+    [GeneratedRegex("\"access_token\":\"(?:[^\"]|\"\")*\"", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex AccessTokenRegex();
 }
