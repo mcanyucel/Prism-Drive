@@ -8,19 +8,20 @@ namespace Prism_Drive.Views;
 
 public partial class Login : Popup
 {
-    private static HttpClient _httpClient = new();
+    private static readonly HttpClient _httpClient = new();
 
 
     public Login()
     {
         InitializeComponent();
+        // since this is a Popup, it cannot be databound.
     }
 
     private async Task TryLoginAsync()
     {
-        var email = "mcanyucel@proton.me";
-        var password = "arekKa56";
-        var token_name = "maui";
+        var email = txtUsername.Text;
+        var password = txtPassword.Text;
+        var token_name = txtTokenName.Text;
 
         var jsonString = JsonSerializer.Serialize(new { email, password, token_name });
 
@@ -29,6 +30,8 @@ public partial class Login : Popup
             Encoding.UTF8,
             "application/json"
             );
+
+        txtLoginStatus.Text = "Acquiring access token...";
 
         using HttpResponseMessage httpResponse = await _httpClient.PostAsync("https://app.prismdrive.com/api/v1/auth/login", jsonContent);
 
@@ -44,16 +47,17 @@ public partial class Login : Popup
             if (accessTokenMatch.Success)
             {
                 var accessToken = accessTokenMatch.ToString().Split(':')[1].Replace("\"", String.Empty);
+                txtLoginStatus.Text = "Access token acquired, saving the token...";
                 Debug.WriteLine(accessToken);
             }
             else
             {
-                Debug.WriteLine("Invalid response");
+                txtLoginStatus.Text = "Cannot extract access token, invalid response!";
             }
         }
         else
         {
-            Debug.Write(httpResponse.StatusCode);
+            txtLoginStatus.Text = $"Server connection error: {httpResponse.StatusCode.ToString()}";
         }
     }
 

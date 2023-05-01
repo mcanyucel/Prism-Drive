@@ -14,6 +14,11 @@
             <Label Text="Password" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
             <Entry x:Name="txtPassword" IsPassword="True" HorizontalOptions="End" TextColor="Black" />
         </HorizontalStackLayout>
+        <HorizontalStackLayout HorizontalOptions="Fill" VerticalOptions="CenterAndExpand">
+            <Label Text="Token Name" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
+            <Entry x:Name="txtTokenName" HorizontalOptions="CenterAndExpand" TextColor="Black" />
+        </HorizontalStackLayout>
+        <Label x:Name="txtLoginStatus" HorizontalOptions="FillAndExpand" Margin="8" TextColor="DarkBlue" Text="Idle..." />
         <Button Text="LOGIN" x:Name="btnLogin" VerticalOptions="End" HorizontalOptions="End" Margin="8" Clicked="btnLogin_Clicked" />
     </VerticalStackLayout>
 </toolkit:Popup>
