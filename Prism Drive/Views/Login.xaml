@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               toolkit:CanBeDismissedByTappingOutsideOfPopup="False"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Prism_Drive.Views.Login">
+    <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="CenterAndExpand">
+        <Label Text="Please enter your credentials to login to the Prism Drive:" HorizontalOptions="FillAndExpand" Margin="8" TextColor="Black" />
+        <HorizontalStackLayout HorizontalOptions="Fill" VerticalOptions="CenterAndExpand">
+            <Label Text="Username" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
+            <Entry x:Name="txtUsername" HorizontalOptions="CenterAndExpand" TextColor="Black" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout HorizontalOptions="FillAndExpand">
+            <Label Text="Password" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
+            <Entry x:Name="txtPassword" IsPassword="True" HorizontalOptions="End" TextColor="Black" />
+        </HorizontalStackLayout>
+        <Button Text="LOGIN" x:Name="btnLogin" VerticalOptions="End" HorizontalOptions="End" Margin="8" Clicked="btnLogin_Clicked" />
+    </VerticalStackLayout>
+</toolkit:Popup>
