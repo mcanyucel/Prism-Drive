@@ -21,7 +21,7 @@ public partial class Login : Popup
         btnLogin.IsEnabled = false;
         var email = txtUsername.Text;
         var password = txtPassword.Text;
-        var token_name = txtTokenName.Text;
+        var token_name = "prism-drive";
 
         txtLoginStatus.Text = "Acquiring user...";
 
