@@ -4,7 +4,6 @@
              xmlns:local="clr-namespace:Prism_Drive"
              xmlns:converters="clr-namespace:Prism_Drive.BindingConverters"
              xmlns:viewmodels="clr-namespace:Prism_Drive.ViewModels"
-             Loaded="ContentPage_Loaded"
              
              x:Class="Prism_Drive.MainPage">
     
@@ -18,7 +17,6 @@
 
     <ScrollView>
         <VerticalStackLayout
-            Spacing="25"
             VerticalOptions="Start">
 
             <Grid HorizontalOptions="FillAndExpand"  BackgroundColor="Blue" IsVisible="{Binding PrismUser, Converter={StaticResource UserBooleanConverter}}">
@@ -40,14 +38,26 @@
                 <Button Text="LOGIN" HorizontalOptions="End" Margin="8" Command="{Binding LoginCommand}" />
             </Grid>
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
+            <HorizontalStackLayout VerticalOptions="EndAndExpand" BackgroundColor="Aquamarine">
+                <Label Margin="8" Text="Current Status:" TextColor="Black" />
+                <Label Margin="0,8,8,8" Text="{Binding Status}" TextColor="Black" />
+                <Label Margin="8" Text="Last Operation:" TextColor="Black" />
+                <Label Margin="0,8,8,8" Text="{Binding LastOperation}" TextColor="Black" />
+            </HorizontalStackLayout>
 
+            <Grid HorizontalOptions="FillAndExpand">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
 
+                <Entry Grid.Row="0" Margin="8" Placeholder="New Folder Name" Text="{Binding NewFolderName, Mode=TwoWay}" />
+                <Button Grid.Column="1" Text="Create Folder" Margin="8" Command="{Binding CreateFolderCommand}" />
+            </Grid>
 
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            
+            
         </VerticalStackLayout>
     </ScrollView>
 

@@ -1,5 +1,4 @@
 ﻿using Prism_Drive.Models;
-using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -10,10 +9,27 @@ namespace Prism_Drive.Services.Implementation
     internal partial class HttpService : IHttpService
     {
         private static readonly HttpClient httpClient = new();
-        private static readonly string loginEndpoint = "https://app.prismdrive.com/api/v1/auth/login"; 
+        private static readonly string loginEndpoint = "https://app.prismdrive.com/api/v1/auth/login";
         private static readonly string fileListsEndpoint = "https://app.prismdrive.com/api/v1/file-entries?perPage=50";
+        private static readonly string createFolderEndpoint = "https://app.prismdrive.com/api/v1/folders";
 
-        public async Task<PrismUser?> GetAccessTokenAsync(string email, string password, string token_name)
+        public async Task<bool> CreateFolderAsync(string folderPath, string accessToken)
+        {
+            var payloadString = "{\"name\": \"" + folderPath + "\",  \"parentId\": null }";
+            using StringContent payload = new(payloadString, Encoding.UTF8, "application/json");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using HttpResponseMessage httpResponse = await httpClient.PostAsync(createFolderEndpoint, payload);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<PrismUser> GetAccessTokenAsync(string email, string password, string token_name)
         {
             var jsonString = JsonSerializer.Serialize(new { email, password, token_name });
             using StringContent jsonContent = new(jsonString, Encoding.UTF8, "application/json");
@@ -26,7 +42,7 @@ namespace Prism_Drive.Services.Implementation
                 var accessTokenMatch = AccessTokenRegex().Match(jsonResponse);
                 var displayNameMatch = DisplayNameRegex().Match(jsonResponse);
                 var avatarUrlMatch = AvatarUrlRegex().Match(jsonResponse);
-                
+
                 // Only access token is mandatory
                 if (accessTokenMatch.Success)
                 {
@@ -85,6 +101,4 @@ namespace Prism_Drive.Services.Implementation
         [GeneratedRegex("\"avatar\":\"[^\"]*\"", RegexOptions.IgnoreCase)]
         private partial Regex AvatarUrlRegex();
     }
-
-
 }

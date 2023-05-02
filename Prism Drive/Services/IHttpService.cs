@@ -6,5 +6,7 @@ namespace Prism_Drive.Services
     {
         Task<PrismUser> GetAccessTokenAsync(string email, string password, string token_name);
         Task<string> GetFileListsAsync(string accessToken);
+
+        Task<bool> CreateFolderAsync(string folderPath, string accessToken);
     }
 }
