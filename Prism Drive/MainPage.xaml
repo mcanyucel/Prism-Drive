@@ -28,8 +28,8 @@
                 </Grid.ColumnDefinitions>
                 <Image HorizontalOptions="Start" Grid.Column="0"
                     Source="{Binding PrismUser.AvatarUrl}" HeightRequest="64"  />
-                <Label Grid.Column="1" Margin="8" Text="{Binding PrismUser.DisplayName}" HorizontalOptions="Start" VerticalOptions="Center" TextColor="White" />
-                <Button Grid.Column="2" Text="LOG OUT" HorizontalOptions="End" Margin="12" />
+                <Label Grid.Column="1" Margin="8" Text="{Binding PrismUser.DisplayName, StringFormat= 'Welcome, {0}!'}" HorizontalOptions="Start" VerticalOptions="Center" TextColor="White" />
+                <Button Grid.Column="2" Text="LOG OUT" HorizontalOptions="End" Margin="12" Command="{Binding LogoutCommand}" />
 
             </Grid>
             

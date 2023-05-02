@@ -13,8 +13,26 @@ namespace Prism_Drive.ViewModels
 
 
         public bool IsBusy { get => isBusy; set => SetProperty(ref isBusy, value); }
-        public PrismUser PrismUser { get => prismUser; set => SetProperty(ref prismUser, value); }
+        public PrismUser PrismUser { get => prismUser; set { SetProperty(ref prismUser, value); SaveUser(); CommandCanExecuteChanged(LoginCommand, LogoutCommand); } }
+
+        private void SaveUser()
+        {
+            if (PrismUser == null)
+            {
+                Preferences.Default.Remove(AVATAR_KEY);
+                Preferences.Default.Remove(NAME_KEY);
+                Preferences.Default.Remove(ACCESS_TOKEN_KEY);
+            }
+            else
+            {
+                Preferences.Default.Set(AVATAR_KEY, PrismUser.AvatarUrl);
+                Preferences.Default.Set(NAME_KEY, PrismUser.DisplayName);
+                Preferences.Default.Set(ACCESS_TOKEN_KEY, PrismUser.AccessToken);
+            }
+        }
+
         public IRelayCommand LoginCommand { get; set; }
+        public IRelayCommand LogoutCommand { get; set; }
         public bool ShowLoginPopup { get => showLoginPopup; set => SetProperty(ref showLoginPopup, value); }
 
         public MainViewModel(IHttpService httpServiceProxy)
@@ -22,8 +40,27 @@ namespace Prism_Drive.ViewModels
             httpService = httpServiceProxy;
 
             LoginCommand = new RelayCommand(Login, LoginCanExecute);
+            LogoutCommand = new RelayCommand(Logout, LogoutCanExecute);
 
             CheckUser();
+        }
+
+        private static void CommandCanExecuteChanged(params IRelayCommand[] commands)
+        {
+            foreach (var command in commands)
+            {
+                command.NotifyCanExecuteChanged();
+            }
+        }
+
+        private void Logout()
+        {
+            PrismUser = null;
+        }
+
+        private bool LogoutCanExecute()
+        {
+            return PrismUser != null && IsBusy == false;
         }
 
         private void Login()
@@ -33,7 +70,7 @@ namespace Prism_Drive.ViewModels
 
         private bool LoginCanExecute()
         {
-            return PrismUser == null;
+            return PrismUser == null && IsBusy == false;
         }
 
         private void CheckUser()
@@ -42,7 +79,7 @@ namespace Prism_Drive.ViewModels
             var hasName = Preferences.Default.ContainsKey(NAME_KEY);
             var hasAcccessToken = Preferences.Default.ContainsKey(ACCESS_TOKEN_KEY);
 
-            if (hasAvatar && hasName && hasAcccessToken) 
+            if (hasAvatar && hasName && hasAcccessToken)
             {
                 PrismUser = new PrismUser
                 {
