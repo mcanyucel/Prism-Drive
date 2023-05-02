@@ -39,5 +39,10 @@ public partial class MainPage : ContentPage
     }
 
     private MainViewModel MainViewModel => this.BindingContext as MainViewModel;
+
+    private async void ContentPage_Loaded(object sender, EventArgs e)
+    {
+        await MainViewModel.GetFileList();
+    }
 }
 

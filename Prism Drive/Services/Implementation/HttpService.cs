@@ -1,5 +1,6 @@
 ﻿using Prism_Drive.Models;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -10,6 +11,7 @@ namespace Prism_Drive.Services.Implementation
     {
         private static readonly HttpClient httpClient = new();
         private static readonly string loginEndpoint = "https://app.prismdrive.com/api/v1/auth/login"; 
+        private static readonly string fileListsEndpoint = "https://app.prismdrive.com/api/v1/file-entries?perPage=50";
 
         public async Task<PrismUser?> GetAccessTokenAsync(string email, string password, string token_name)
         {
@@ -48,6 +50,30 @@ namespace Prism_Drive.Services.Implementation
             {
                 return null;
             }
+        }
+
+        public async Task<string> GetFileListsAsync(string accessToken)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using HttpResponseMessage httpResponse = await httpClient.GetAsync(fileListsEndpoint);
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return "I get a value back!";
+            }
+            else
+            {
+                switch (httpResponse.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.Forbidden:
+                        return "You don't have required permissions for this action.";
+                    case System.Net.HttpStatusCode.Unauthorized:
+                        return "Invalid access token";
+                    default:
+                        return "Error";
+                }
+            }
+
         }
 
         [GeneratedRegex("\"access_token\":\"[^\"]*\"", RegexOptions.IgnoreCase)]

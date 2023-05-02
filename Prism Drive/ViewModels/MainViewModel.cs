@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Storage;
 using Prism_Drive.Models;
 using Prism_Drive.Services;
+using System.Diagnostics;
 
 namespace Prism_Drive.ViewModels
 {
@@ -87,6 +88,7 @@ namespace Prism_Drive.ViewModels
                     AvatarUrl = Preferences.Default.Get(AVATAR_KEY, string.Empty),
                     AccessToken = Preferences.Default.Get(ACCESS_TOKEN_KEY, string.Empty)
                 };
+                
             }
             else
             {
@@ -94,6 +96,11 @@ namespace Prism_Drive.ViewModels
             }
         }
 
+        public async Task GetFileList()
+        {
+            var fileList = await httpService.GetFileListsAsync(PrismUser.AccessToken);
+            Debug.WriteLine($"\n\n\n{fileList}\n\n\n");
+        }
 
         private bool isBusy = false;
         private readonly IHttpService httpService;
