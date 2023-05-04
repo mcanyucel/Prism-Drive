@@ -2,24 +2,17 @@
 
 namespace Prism_Drive.BindingConverters
 {
-    class ItemStatusColorConverter : IValueConverter
+    class ItemStatusBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string status)
             {
-                return status switch
-                {
-                    "Pending" => Colors.Green,
-                    "Uploading" => Colors.Blue,
-                    "Uploaded" => Colors.Gray,
-                    "Failed" => Colors.Red,
-                    _ => Colors.Red,
-                };
+                return status == "Uploading";
             }
             else
             {
-                return Colors.Black;
+                return false;
             }
         }
 

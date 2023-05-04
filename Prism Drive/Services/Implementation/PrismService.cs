@@ -1,5 +1,4 @@
 ﻿using Prism_Drive.Models;
-using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -12,9 +11,6 @@ namespace Prism_Drive.Services.Implementation
 
         public async Task<UploadResult> UploadFile(UploadItem uploadItem, string uploadDirectory, string accessToken)
         {
-
-            
-
             var content = new MultipartFormDataContent
                 {
                     { new StringContent("null"), "parent_id" },
@@ -152,8 +148,5 @@ namespace Prism_Drive.Services.Implementation
         private static readonly string uploadEndpoint = "https://app.prismdrive.com/api/v1/uploads";
 
         private static readonly string token_name = "PrismDrive";
-
-        private static readonly string EMAIL_KEY = "email";
-        private static readonly string PASSWORD_KEY = "password";
     }
 }
