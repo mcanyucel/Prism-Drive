@@ -3,25 +3,42 @@
                toolkit:CanBeDismissedByTappingOutsideOfPopup="False"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Size="400, 220"
              x:Class="Prism_Drive.Views.Login">
-    <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="CenterAndExpand">
-        <Label Text="Please enter your credentials to login to the Prism Drive:" HorizontalOptions="FillAndExpand" Margin="8" TextColor="Black" />
-        <HorizontalStackLayout HorizontalOptions="Fill" VerticalOptions="CenterAndExpand">
-            <Label Text="Username" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
-            <Entry x:Name="txtUsername" HorizontalOptions="CenterAndExpand" TextColor="Black" />
+    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Text="Username" VerticalOptions="Center" Margin="8" TextColor="Black" />
+        <Entry Grid.Row="0" Grid.Column="1" x:Name="txtUsername" TextColor="Black" VerticalOptions="Center" />
+
+        <Label Grid.Row="1" Grid.Column="0" Text="Password" VerticalOptions="Center" Margin="8" TextColor="Black" />
+        <Entry Grid.Row="1" Grid.Column="1" x:Name="txtPassword" IsPassword="True" TextColor="Black" VerticalOptions="Center" />
+
+        <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Label Text="Save Password (Plain Text)" VerticalOptions="Center" Margin="8" TextColor="Black" />
+            <Switch x:Name="chbSavePassword" VerticalOptions="Center" Margin="8" HorizontalOptions="End" OnColor="Blue" />
         </HorizontalStackLayout>
-        <HorizontalStackLayout HorizontalOptions="FillAndExpand">
-            <Label Text="Password" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
-            <Entry x:Name="txtPassword" IsPassword="True" HorizontalOptions="End" TextColor="Black" />
-        </HorizontalStackLayout>
-        <HorizontalStackLayout HorizontalOptions="FillAndExpand">
-            <Label Text="SavePassword" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
-            <Switch x:Name="chbSavePassword" HorizontalOptions="End" VerticalOptions="Center" />
-        </HorizontalStackLayout>
-        <Label Text="Note: Password is saved in plain text." />
-        <HorizontalStackLayout HorizontalOptions="FillAndExpand">
-            <Label x:Name="txtLoginStatus" HorizontalOptions="FillAndExpand" Margin="8" TextColor="DarkBlue" Text="Idle..." />
-            <Button Text="LOGIN" x:Name="btnLogin" VerticalOptions="End" HorizontalOptions="End" Margin="8" Clicked="btnLogin_Clicked" />
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" MaximumWidthRequest="300" x:Name="txtLoginStatus" Margin="8" HorizontalOptions="Start" VerticalOptions="Center" TextColor="DarkBlue" LineBreakMode="WordWrap" Text="" />
+            <Button Grid.Column="1" Text="LOGIN" x:Name="btnLogin" HorizontalOptions="End" Margin="8" Clicked="btnLogin_Clicked" />
+        </Grid>
+        
+        
+    </Grid>
 </toolkit:Popup>
