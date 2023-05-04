@@ -1,4 +1,5 @@
 ﻿using Prism_Drive.Models;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -9,20 +10,28 @@ namespace Prism_Drive.Services.Implementation
     internal partial class PrismService : IPrismService
     {
 
-        public async Task<bool> CreateFolderAsync(string folderPath, string accessToken)
+        public async Task CreateFolderAsync(string folderPath, string accessToken)
         {
             var payloadString = "{\"name\": \"" + folderPath + "\",  \"parentId\": null }";
             using StringContent payload = new(payloadString, Encoding.UTF8, "application/json");
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            using HttpResponseMessage httpResponse = await httpClient.PostAsync(createFolderEndpoint, payload);
-            if (httpResponse.IsSuccessStatusCode)
+
+            using HttpRequestMessage request = new()
             {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(createFolderEndpoint),
+                Headers =
+                {
+                    { "Authorization", "Bearer " + accessToken }
+                },
+                Content = new StringContent(payloadString)
+                {
+                    Headers = { ContentType = new MediaTypeHeaderValue("application/json") }
+                }
+            };
+
+            using HttpResponseMessage httpResponse = await httpClient.SendAsync(request);
+
+            httpResponse.EnsureSuccessStatusCode();
         }
 
         public async Task<PrismUser> FetchUserAsync(string email, string password)
@@ -63,26 +72,22 @@ namespace Prism_Drive.Services.Implementation
 
         public async Task<string> GetFileListsAsync(string accessToken)
         {
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            using HttpResponseMessage httpResponse = await httpClient.GetAsync(fileListsEndpoint);
-
-            if (httpResponse.IsSuccessStatusCode)
+            using HttpRequestMessage request = new()
             {
-                return "I get a value back!";
-            }
-            else
-            {
-                switch (httpResponse.StatusCode)
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(fileListsEndpoint),
+                Headers =
                 {
-                    case System.Net.HttpStatusCode.Forbidden:
-                        return "You don't have required permissions for this action.";
-                    case System.Net.HttpStatusCode.Unauthorized:
-                        return "Invalid access token";
-                    default:
-                        return "Error";
+                    { "Authorization", "Bearer " + accessToken }
                 }
-            }
+            };
 
+            using HttpResponseMessage httpResponse = await httpClient.SendAsync(request);
+
+
+            httpResponse.EnsureSuccessStatusCode();
+            var body = await httpResponse.Content.ReadAsStringAsync();
+            return body;
         }
 
         [GeneratedRegex("\"access_token\":\"[^\"]*\"", RegexOptions.IgnoreCase)]

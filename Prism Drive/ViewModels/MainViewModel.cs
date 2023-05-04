@@ -59,12 +59,23 @@ namespace Prism_Drive.ViewModels
         public async Task Initialize()
         {
             await CheckUser();
+
+            //if (PrismUser != null)
+            //{
+            //    var res = await PrismService.GetFileListsAsync(PrismUser.AccessToken);
+            //}
         }
 
-        public async Task GetFileList()
+        private async Task GetFileList()
         {
-            var fileList = await PrismService.GetFileListsAsync(PrismUser.AccessToken);
-            Debug.WriteLine($"\n\n\n{fileList}\n\n\n");
+            try
+            {
+                var res = await PrismService.GetFileListsAsync(PrismUser.AccessToken);
+            }
+            catch (Exception ex)
+            {
+                Status = ex.Message;
+            }
         }
 
         public MainViewModel(IPrismService httpServiceProxy, IUserService userServiceProxy)
@@ -146,20 +157,17 @@ namespace Prism_Drive.ViewModels
         private async Task CreateFolder()
         {
             IsBusy = true;
-
-            var result = await PrismService.CreateFolderAsync(NewFolderName, PrismUser.AccessToken);
-
-            if (result)
+            try
             {
-                LastOperation = $"{NewFolderName} created successfully. ({DateTime.Now})";
+                await PrismService.CreateFolderAsync(NewFolderName, PrismUser.AccessToken);
+                LastOperation = $"Created {NewFolderName}. ({DateTime.Now})";
             }
-            else
+            catch(Exception ex)
             {
                 LastOperation = $"Failed to create {NewFolderName}. ({DateTime.Now})";
+                Status = ex.Message;
             }
-
             IsBusy = false;
-
         }
 
         private static void CommandCanExecuteChanged(params IRelayCommand[] commands)
