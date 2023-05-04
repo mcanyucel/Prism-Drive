@@ -1,18 +1,19 @@
 using CommunityToolkit.Maui.Views;
 using Prism_Drive.Services;
+using Prism_Drive.Services.Implementation;
 
 namespace Prism_Drive.Views;
 
 public partial class Login : Popup
 {
 
-    private readonly IHttpService httpService;
+    private readonly IUserService userService;
 
 
     public Login()
     {
         InitializeComponent();
-        httpService = App.Current.Services.GetService<IHttpService>();
+        userService = App.Current.Services.GetService<IUserService>();
     }
 
     private async Task TryLoginAsync()
@@ -21,22 +22,23 @@ public partial class Login : Popup
         btnLogin.IsEnabled = false;
         var email = txtUsername.Text;
         var password = txtPassword.Text;
-        var token_name = "prism-drive";
 
         txtLoginStatus.Text = "Acquiring user...";
 
-        var user = await httpService.GetAccessTokenAsync(email, password, token_name);
+        UserRequestResult userRequestResult = await userService.GetUserAsync(email, password);
 
-        if (user == null)
+        if (userRequestResult.IsSuccess)
         {
-            txtLoginStatus.Text = "Error getting user details!";
+            if (!chbSavePassword.IsToggled)
+            {
+                userRequestResult.PrismUser.Password = string.Empty;
+            }
+            Close(userRequestResult.PrismUser);
         }
-
         else
         {
-            Close(user);
+            txtLoginStatus.Text = userRequestResult.Message;
         }
-
         btnLogin.IsEnabled = true;
     }
 

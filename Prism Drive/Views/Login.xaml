@@ -14,7 +14,14 @@
             <Label Text="Password" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
             <Entry x:Name="txtPassword" IsPassword="True" HorizontalOptions="End" TextColor="Black" />
         </HorizontalStackLayout>
-        <Label x:Name="txtLoginStatus" HorizontalOptions="FillAndExpand" Margin="8" TextColor="DarkBlue" Text="Idle..." />
-        <Button Text="LOGIN" x:Name="btnLogin" VerticalOptions="End" HorizontalOptions="End" Margin="8" Clicked="btnLogin_Clicked" />
+        <HorizontalStackLayout HorizontalOptions="FillAndExpand">
+            <Label Text="SavePassword" HorizontalOptions="Start" VerticalOptions="Center" Margin="8" TextColor="Black" />
+            <Switch x:Name="chbSavePassword" HorizontalOptions="End" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+        <Label Text="Note: Password is saved in plain text." />
+        <HorizontalStackLayout HorizontalOptions="FillAndExpand">
+            <Label x:Name="txtLoginStatus" HorizontalOptions="FillAndExpand" Margin="8" TextColor="DarkBlue" Text="Idle..." />
+            <Button Text="LOGIN" x:Name="btnLogin" VerticalOptions="End" HorizontalOptions="End" Margin="8" Clicked="btnLogin_Clicked" />
+        </HorizontalStackLayout>
     </VerticalStackLayout>
 </toolkit:Popup>

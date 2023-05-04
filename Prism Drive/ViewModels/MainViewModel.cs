@@ -19,8 +19,7 @@ namespace Prism_Drive.ViewModels
             {
                 SetProperty(ref isBusy, value);
                 CommandCanExecuteChanged(LoginCommand, LogoutCommand, RemoveSelectedCommand);
-                AsyncCommandCanExecuteChanged(CreateFolderCommand, SelectFilesCommand); ;
-                Status = IsBusy ? "Working..." : "Ready";
+                AsyncCommandCanExecuteChanged(CreateFolderCommand, SelectFilesCommand, UploadFilesCommand); ;
             }
         }
         public PrismUser PrismUser
@@ -29,9 +28,10 @@ namespace Prism_Drive.ViewModels
             set
             {
                 SetProperty(ref prismUser, value);
-                SaveUser();
+                Status = value == null ? "Not logged in" : "Ready";
+                if (value != null) { userService.SaveUser(value); }
                 CommandCanExecuteChanged(LoginCommand, LogoutCommand, RemoveSelectedCommand);
-                AsyncCommandCanExecuteChanged(CreateFolderCommand, SelectFilesCommand);
+                AsyncCommandCanExecuteChanged(CreateFolderCommand, SelectFilesCommand, UploadFilesCommand);
             }
         }
         public IRelayCommand LoginCommand { get; set; }
@@ -56,15 +56,21 @@ namespace Prism_Drive.ViewModels
             } 
         }
 
+        public async Task Initialize()
+        {
+            await CheckUser();
+        }
+
         public async Task GetFileList()
         {
-            var fileList = await httpService.GetFileListsAsync(PrismUser.AccessToken);
+            var fileList = await PrismService.GetFileListsAsync(PrismUser.AccessToken);
             Debug.WriteLine($"\n\n\n{fileList}\n\n\n");
         }
 
-        public MainViewModel(IHttpService httpServiceProxy)
+        public MainViewModel(IPrismService httpServiceProxy, IUserService userServiceProxy)
         {
-            httpService = httpServiceProxy;
+            PrismService = httpServiceProxy;
+            userService = userServiceProxy;
 
             LoginCommand = new RelayCommand(Login, LoginCanExecute);
             LogoutCommand = new RelayCommand(Logout, LogoutCanExecute);
@@ -72,12 +78,9 @@ namespace Prism_Drive.ViewModels
             CreateFolderCommand = new AsyncRelayCommand(CreateFolder, CreateFolderCanExecute);
             SelectFilesCommand = new AsyncRelayCommand(SelectFiles, SelectFilesCanExecute);
             UploadFilesCommand = new AsyncRelayCommand(UploadFiles, UploadFilesCanExecute);
-            
-            CheckUser();
 
             SelectedFiles.CollectionChanged += SelectedFiles_CollectionChanged;
 
-            Status = "Ready";
         }
 
         private void RemoveSelected()
@@ -96,9 +99,9 @@ namespace Prism_Drive.ViewModels
             CommandCanExecuteChanged(RemoveSelectedCommand);
         }
 
-        private async Task UploadFiles()
+        private Task UploadFiles()
         {
-            await Task.Run(()=> Debug.WriteLine(UploadDirectoryPath));
+            throw new NotImplementedException();
         }
 
         private bool UploadFilesCanExecute()
@@ -144,7 +147,7 @@ namespace Prism_Drive.ViewModels
         {
             IsBusy = true;
 
-            var result = await httpService.CreateFolderAsync(NewFolderName, PrismUser.AccessToken);
+            var result = await PrismService.CreateFolderAsync(NewFolderName, PrismUser.AccessToken);
 
             if (result)
             {
@@ -178,6 +181,7 @@ namespace Prism_Drive.ViewModels
         private void Logout()
         {
             PrismUser = null;
+            userService.RemoveUser();
         }
 
         private bool LogoutCanExecute()
@@ -195,55 +199,32 @@ namespace Prism_Drive.ViewModels
             return PrismUser == null && IsBusy == false;
         }
 
-        private void CheckUser()
+        private async Task CheckUser()
         {
-            var hasAvatar = Preferences.Default.ContainsKey(AVATAR_KEY);
-            var hasName = Preferences.Default.ContainsKey(NAME_KEY);
-            var hasAcccessToken = Preferences.Default.ContainsKey(ACCESS_TOKEN_KEY);
+            IsBusy = true;
+            Status = "Acquiring user access token...";
 
-            if (hasAvatar && hasName && hasAcccessToken)
+            var userRequestResult = await userService.GetUserAsync();
+            if (userRequestResult.IsSuccess)
             {
-                PrismUser = new PrismUser
-                {
-                    DisplayName = Preferences.Default.Get(NAME_KEY, string.Empty),
-                    AvatarUrl = Preferences.Default.Get(AVATAR_KEY, string.Empty),
-                    AccessToken = Preferences.Default.Get(ACCESS_TOKEN_KEY, string.Empty)
-                };
-                
+                PrismUser = userRequestResult.PrismUser;
             }
             else
             {
-                PrismUser = null;
+                Status = userRequestResult.Message;
             }
-        }
-        private void SaveUser()
-        {
-            if (PrismUser == null)
-            {
-                Preferences.Default.Remove(AVATAR_KEY);
-                Preferences.Default.Remove(NAME_KEY);
-                Preferences.Default.Remove(ACCESS_TOKEN_KEY);
-            }
-            else
-            {
-                Preferences.Default.Set(AVATAR_KEY, PrismUser.AvatarUrl);
-                Preferences.Default.Set(NAME_KEY, PrismUser.DisplayName);
-                Preferences.Default.Set(ACCESS_TOKEN_KEY, PrismUser.AccessToken);
-            }
+
+            IsBusy = false;
         }
 
         private bool isBusy = false;
-        private readonly IHttpService httpService;
+        private readonly IPrismService PrismService;
+        private readonly IUserService userService;
         private PrismUser prismUser;
         private bool showLoginPopup;
         private string newFolderName;
-        private string status;
+        private string status = "Not logged in";
         private string lastOperation = "-";
         private string uploadDirectoryPath;
-
-
-        private static readonly string AVATAR_KEY = "email";
-        private static readonly string NAME_KEY = "name";
-        private static readonly string ACCESS_TOKEN_KEY = "accessToken";
     }
 }

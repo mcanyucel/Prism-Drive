@@ -42,7 +42,7 @@ public partial class MainPage : ContentPage
 
     private async void ContentPage_Loaded(object sender, EventArgs e)
     {
-        await MainViewModel.GetFileList();
+        await MainViewModel.Initialize();
     }
 }
 

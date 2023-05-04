@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:Prism_Drive"
              xmlns:converters="clr-namespace:Prism_Drive.BindingConverters"
              xmlns:viewmodels="clr-namespace:Prism_Drive.ViewModels"
-             
+             Loaded="ContentPage_Loaded"
              x:Class="Prism_Drive.MainPage">
 
 

@@ -2,9 +2,9 @@
 
 namespace Prism_Drive.Services
 {
-    internal interface IHttpService
+    internal interface IPrismService
     {
-        Task<PrismUser> GetAccessTokenAsync(string email, string password, string token_name);
+        Task<PrismUser> FetchUserAsync(string email, string password);
         Task<string> GetFileListsAsync(string accessToken);
 
         Task<bool> CreateFolderAsync(string folderPath, string accessToken);

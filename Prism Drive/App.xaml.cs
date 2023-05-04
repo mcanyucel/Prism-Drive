@@ -24,7 +24,8 @@ public partial class App : Application
 	{
 		var services = new ServiceCollection();
 
-		services.AddSingleton<IHttpService, HttpService>();
+		services.AddSingleton<IPrismService, PrismService>();
+		services.AddSingleton<IUserService, UserService>();
 
 		services.AddTransient<MainViewModel>();
 
