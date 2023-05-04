@@ -20,7 +20,7 @@ namespace Prism_Drive.BindingConverters
                     case "Failed":
                         return Colors.Red;
                     default:
-                        return Colors.Yellow;
+                        return Colors.Red;
                 }
             }
             else

@@ -110,9 +110,21 @@ namespace Prism_Drive.ViewModels
             CommandCanExecuteChanged(RemoveSelectedCommand);
         }
 
-        private Task UploadFiles()
+        private async Task UploadFiles()
         {
-            throw new NotImplementedException();
+            IsBusy = true;
+            Status = "Uploading files...";
+
+            await Parallel.ForEachAsync(SelectedFiles, async (file, uploadCancellationToken) =>
+            {
+                file.Status = "Uploading";
+                var result = await PrismService.UploadFile(file, UploadDirectoryPath, PrismUser.AccessToken);
+                file.Status = result.IsSuccess ? "Uploaded" : "Failed";
+                LastOperation = $"{file.FileResult.FileName}: {file.Status}. ({DateTime.Now})";
+            });
+
+            Status = "Ready";
+            IsBusy = false;
         }
 
         private bool UploadFilesCanExecute()
@@ -234,5 +246,6 @@ namespace Prism_Drive.ViewModels
         private string status = "Not logged in";
         private string lastOperation = "-";
         private string uploadDirectoryPath;
+        private CancellationToken uploadCancellationToken = new CancellationTokenSource().Token;
     }
 }

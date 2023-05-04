@@ -10,6 +10,37 @@ namespace Prism_Drive.Services.Implementation
     internal partial class PrismService : IPrismService
     {
 
+        public async Task<UploadResult> UploadFile(UploadItem uploadItem, string uploadDirectory, string accessToken)
+        {
+
+            var result = new UploadResult();
+
+            using HttpRequestMessage httpRequest = new()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(uploadEndpoint),
+                Headers =
+                {
+                    { "Authorization", "Bearer " + accessToken }
+                },
+                Content = new MultipartFormDataContent
+                {
+                    { new StringContent("null"), "parentId" },
+                    { new StringContent(uploadItem.FileResult.FileName), "name" },
+                    { new StringContent(uploadItem.FileResult.ContentType), "content_type" },
+                    { new StreamContent(await uploadItem.FileResult.OpenReadAsync()), "file", uploadItem.FileResult.FileName }
+                }
+
+            };
+
+            using HttpResponseMessage httpResponse = await httpClient.SendAsync(httpRequest);
+
+            result.IsSuccess = httpResponse.IsSuccessStatusCode;
+            result.Message = await httpResponse.Content.ReadAsStringAsync();
+
+            return result;
+        }
+
         public async Task CreateFolderAsync(string folderPath, string accessToken)
         {
             var payloadString = "{\"name\": \"" + folderPath + "\",  \"parentId\": null }";
@@ -30,6 +61,8 @@ namespace Prism_Drive.Services.Implementation
             };
 
             using HttpResponseMessage httpResponse = await httpClient.SendAsync(request);
+
+            var jsonResponse = await httpResponse.Content.ReadAsStringAsync();
 
             httpResponse.EnsureSuccessStatusCode();
         }
@@ -99,10 +132,14 @@ namespace Prism_Drive.Services.Implementation
         [GeneratedRegex("\"avatar\":\"[^\"]*\"", RegexOptions.IgnoreCase)]
         private partial Regex AvatarUrlRegex();
 
-        private static readonly HttpClient httpClient = new();
+        private static readonly HttpClient httpClient = new()
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        };
         private static readonly string loginEndpoint = "https://app.prismdrive.com/api/v1/auth/login";
         private static readonly string fileListsEndpoint = "https://app.prismdrive.com/api/v1/file-entries?perPage=50";
         private static readonly string createFolderEndpoint = "https://app.prismdrive.com/api/v1/folders";
+        private static readonly string uploadEndpoint = "https://app.prismdrive.com/api/v1/uploads";
 
         private static readonly string token_name = "PrismDrive";
 
