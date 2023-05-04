@@ -13,6 +13,22 @@ namespace Prism_Drive.Services.Implementation
         public async Task<UploadResult> UploadFile(UploadItem uploadItem, string uploadDirectory, string accessToken)
         {
 
+            
+
+            var content = new MultipartFormDataContent
+                {
+                    { new StringContent("null"), "parent_id" },
+                    { new StringContent(uploadItem.FileResult.FileName), "name" },
+                    { new StringContent(uploadItem.FileResult.ContentType), "content_type" },
+                    { new StreamContent(await uploadItem.FileResult.OpenReadAsync()), "file", uploadItem.FileResult.FileName }
+                };
+
+            if (!string.IsNullOrWhiteSpace(uploadDirectory))
+            {
+                var relativePath = uploadDirectory + uploadItem.FileResult.FileName;
+                content.Add(new StringContent(relativePath), "relativePath");
+            }
+
             var result = new UploadResult();
 
             using HttpRequestMessage httpRequest = new()
@@ -23,13 +39,7 @@ namespace Prism_Drive.Services.Implementation
                 {
                     { "Authorization", "Bearer " + accessToken }
                 },
-                Content = new MultipartFormDataContent
-                {
-                    { new StringContent("null"), "parentId" },
-                    { new StringContent(uploadItem.FileResult.FileName), "name" },
-                    { new StringContent(uploadItem.FileResult.ContentType), "content_type" },
-                    { new StreamContent(await uploadItem.FileResult.OpenReadAsync()), "file", uploadItem.FileResult.FileName }
-                }
+                Content = content
 
             };
 
