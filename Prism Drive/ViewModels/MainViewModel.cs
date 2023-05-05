@@ -1,7 +1,5 @@
-﻿using CommunityToolkit.Maui.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Storage;
 using Prism_Drive.Models;
 using Prism_Drive.Services;
 using System.Collections.ObjectModel;
@@ -11,10 +9,6 @@ namespace Prism_Drive.ViewModels
 {
     internal class MainViewModel : ObservableObject
     {
-
-
-
-
         public bool IsBusy { get => isBusy; set
             {
                 SetProperty(ref isBusy, value);
