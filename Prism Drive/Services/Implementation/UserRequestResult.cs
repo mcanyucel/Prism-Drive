@@ -2,7 +2,7 @@
 
 namespace Prism_Drive.Services.Implementation
 {
-    class UserRequestResult
+    public class UserRequestResult
     {
         public PrismUser PrismUser { get; set; }
         public bool IsSuccess { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Prism_Drive.Models
 {
-    internal class PrismUser
+    public class PrismUser
     {
         public string DisplayName { get; set; }
         public string AvatarUrl { get; set; }

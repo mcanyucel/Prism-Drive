@@ -2,7 +2,7 @@
 
 namespace Prism_Drive.Models
 {
-    class UploadItem : ObservableObject
+    public class UploadItem : ObservableObject
     {
 
         public FileResult FileResult { get; set; }

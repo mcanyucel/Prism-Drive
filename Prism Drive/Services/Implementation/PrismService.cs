@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Prism_Drive.Services.Implementation
 {
-    internal partial class PrismService : IPrismService
+    public partial class PrismService : IPrismService
     {
 
         public async Task<UploadResult> UploadFile(UploadItem uploadItem, string uploadDirectory, string accessToken)
@@ -111,6 +111,9 @@ namespace Prism_Drive.Services.Implementation
 
         public async Task<string> GetFileListsAsync(string accessToken)
         {
+
+
+
             using HttpRequestMessage request = new()
             {
                 Method = HttpMethod.Get,
@@ -143,7 +146,7 @@ namespace Prism_Drive.Services.Implementation
             Timeout = Timeout.InfiniteTimeSpan
         };
         private static readonly string loginEndpoint = "https://app.prismdrive.com/api/v1/auth/login";
-        private static readonly string fileListsEndpoint = "https://app.prismdrive.com/api/v1/file-entries?perPage=50";
+        private static readonly string fileListsEndpoint = "https://app.prismdrive.com/api/v1/file-entries";
         private static readonly string createFolderEndpoint = "https://app.prismdrive.com/api/v1/folders";
         private static readonly string uploadEndpoint = "https://app.prismdrive.com/api/v1/uploads";
 

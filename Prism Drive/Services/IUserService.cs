@@ -3,7 +3,7 @@ using Prism_Drive.Services.Implementation;
 
 namespace Prism_Drive.Services
 {
-    interface IUserService
+    public interface IUserService
     {
         /// <summary>
         /// Checks the local storage for a saved user credentials, and if found, attempts to fetch the user data from the Prism API.

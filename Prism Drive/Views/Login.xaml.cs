@@ -7,13 +7,14 @@ namespace Prism_Drive.Views;
 public partial class Login : Popup
 {
 
-    private readonly IUserService userService;
+    private readonly IUserService _userService;
 
 
-    public Login()
+    public Login(IUserService userService)
     {
+        _userService = userService;
         InitializeComponent();
-        userService = App.Current.Services.GetService<IUserService>();
+        
     }
 
     private async Task TryLoginAsync()
@@ -25,7 +26,7 @@ public partial class Login : Popup
 
         txtLoginStatus.Text = "Acquiring user...";
 
-        UserRequestResult userRequestResult = await userService.GetUserAsync(email, password);
+        UserRequestResult userRequestResult = await _userService.GetUserAsync(email, password);
 
         if (userRequestResult.IsSuccess)
         {

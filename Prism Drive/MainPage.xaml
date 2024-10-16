@@ -2,6 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:Prism_Drive.BindingConverters"
+             xmlns:viewmodels="clr-namespace:Prism_Drive.ViewModels"
+             xmlns:model="clr-namespace:Prism_Drive.Models"
+             x:DataType="viewmodels:MainViewModel"
              Loaded="ContentPage_Loaded"
              x:Class="Prism_Drive.MainPage">
 
@@ -84,7 +87,7 @@
 
                     <ListView Grid.Row="2" Grid.Column="0" Margin="8" ItemsSource="{Binding SelectedFiles}" SelectionMode="Single" SeparatorVisibility="Default" SeparatorColor="Beige">
                         <ListView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="model:UploadItem">
                                 <ViewCell>
                                     <StackLayout Orientation="Horizontal">
                                         <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalOptions="Center" />

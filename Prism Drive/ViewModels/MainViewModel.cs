@@ -54,10 +54,10 @@ namespace Prism_Drive.ViewModels
         {
             await CheckUser();
 
-            //if (PrismUser != null)
-            //{
-            //    var res = await PrismService.GetFileListsAsync(PrismUser.AccessToken);
-            //}
+            if (PrismUser != null)
+            {
+                var res = await PrismService.GetFileListsAsync(PrismUser.AccessToken);
+            }
         }
 
         private async Task GetFileList()
@@ -128,26 +128,27 @@ namespace Prism_Drive.ViewModels
 
         private async Task SelectFiles()
         {
-            IsBusy = true;
-            try
-            {
-                var result = await FilePicker.PickMultipleAsync();
-                if (result != null)
-                {
-                    foreach (var file in result)
-                    {
-                        if (!SelectedFiles.Any(x => x.FileResult.FullPath == file.FullPath))
-                        {
-                            SelectedFiles.Add(new UploadItem { FileResult = file });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"{ex.Message}", ex);
-            }
-            IsBusy = false;
+            await PrismService.GetFileListsAsync(PrismUser.AccessToken);
+            //IsBusy = true;
+            //try
+            //{
+            //    var result = await FilePicker.PickMultipleAsync();
+            //    if (result != null)
+            //    {
+            //        foreach (var file in result)
+            //        {
+            //            if (!SelectedFiles.Any(x => x.FileResult.FullPath == file.FullPath))
+            //            {
+            //                SelectedFiles.Add(new UploadItem { FileResult = file });
+            //            }
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine($"{ex.Message}", ex);
+            //}
+            //IsBusy = false;
         }
 
         private bool SelectFilesCanExecute()
